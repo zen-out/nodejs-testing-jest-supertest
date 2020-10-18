@@ -25,7 +25,7 @@ const createTodo = async (req, res, next) => {
     try {
         const createdTodo = await TodoModel.create(req.body);
 
-        res.status(201).json(createdTodo);
+        res.status(200).json(createdTodo);
     } catch (error) {
         next(error);
     }
@@ -41,7 +41,7 @@ const updateTodo = async (req, res, next) => {
 
         if (!updatedTodo) res.status(404).json({ message: `Could not find todo with ID: ${req.params.todoId}` });
 
-        res.status(201).json(updatedTodo);
+        res.status(200).json(updatedTodo);
     } catch (error) {
         next(error);
     }
@@ -53,7 +53,7 @@ const deleteTodo = async (req, res, next) => {
 
         if (!deletedTodo) res.status(404).json({ message: `Could not find a todo with ID: ${req.params.todoId}` });
 
-        res.status(201).json(deletedTodo);
+        res.status(200).json(deletedTodo);
     } catch (error) {
         next(error);
     }

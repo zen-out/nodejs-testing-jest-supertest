@@ -11,7 +11,7 @@ let firstTodo;
 describe(`GET${endpointUrl}`, () => {
     jest.setTimeout(15000);
 
-    test('GET' + endpointUrl, async () => {
+    test(`GET${endpointUrl}`, async () => {
         const response = await request(app)
             .get(endpointUrl);
 
@@ -38,9 +38,18 @@ describe(`GET${endpointUrl}`, () => {
             .post(endpointUrl)
             .send(newTodo);
 
-        expect(response.statusCode).toBe(201);
+        expect(response.statusCode).toBe(200);
         expect(response.body.title).toBe(newTodo.title);
         expect(response.body.done).toBe(newTodo.done);
+    });
+
+    test(`POST${endpointUrl} => malformed without 'done' property`, async () => {
+        const response = await request(app)
+            .post(endpointUrl)
+            .send({ title: `This request is missing the 'done' property` });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.body).toStrictEqual({ "message": "Todo validation failed: done: Path `done` is required." });
     });
 
     test(`PUT${endpointUrl}:todoId`, async () => {
@@ -48,7 +57,7 @@ describe(`GET${endpointUrl}`, () => {
             .put(`${endpointUrl}/${firstTodo._id}`)
             .send(newTodo);
 
-        expect(response.statusCode).toBe(201);
+        expect(response.statusCode).toBe(200);
         expect(response.body.title).toBe(newTodo.title);
         expect(response.body.done).toBe(newTodo.done);
     });
@@ -57,9 +66,8 @@ describe(`GET${endpointUrl}`, () => {
         const response = await request(app)
             .delete(`${endpointUrl}/${firstTodo._id}`);
 
-        expect(response.statusCode).toBe(201);
+        expect(response.statusCode).toBe(200);
         expect(response.body.title).toBe(newTodo.title);
         expect(response.body.done).toBe(newTodo.done);
     });
 });
-

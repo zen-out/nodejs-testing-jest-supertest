@@ -22,20 +22,20 @@ beforeEach(() => {
 
 
 describe('getTodoById', () => {
+    beforeEach(() => {
+        req.params.todoId = todoId;
+    });
     test('if todoController has a getTodoById function', () => {
         expect(typeof todoController.getTodoById).toBe('function');
     });
 
     test('if getTodoById calls TodoModel.find', async () => {
-        req.params.todoId = todoId;
-        req.body = newTodo;
-
         await todoController.getTodoById(req, res);
 
         expect(TodoModel.findById).toBeCalledWith(todoId);
     });
 
-    test("if the servers returns a response with status 200 and a todo model", async () => {
+    test("if the server responds with status 200 and the Todo when the request succeeded", async () => {
         TodoModel.findById.mockReturnValue(todoById);
 
         await todoController.getTodoById(req, res, next);
@@ -45,8 +45,8 @@ describe('getTodoById', () => {
         expect(res._getJSONData()).toStrictEqual(todoById);
     });
 
-    test('if the server returns an error when the request fails', async () => {
-        const errorMessage = { message: 'Could not get todos' };
+    test('if the server returns an error when the request failed', async () => {
+        const errorMessage = { message: 'Could not get todo' };
         const rejectedPromise = Promise.reject(errorMessage);
 
         TodoModel.find.mockReturnValue(rejectedPromise);
@@ -67,7 +67,7 @@ describe('getTodos', () => {
         expect(TodoModel.find).toBeCalledWith();
     });
 
-    test("if the servers returns a response with status 200 and all todos", async () => {
+    test("if the server responds with status 200 and the Todos when the request succeeded", async () => {
         TodoModel.find.mockReturnValue(allTodos);
 
         await todoController.getTodos(req, res, next);
@@ -77,7 +77,7 @@ describe('getTodos', () => {
         expect(res._getJSONData()).toStrictEqual(allTodos);
     });
 
-    test('if the server returns an error when the request fails', async () => {
+    test('if the server returns an error when the request failed', async () => {
         const errorMessage = { message: 'Could not get todos' };
         const rejectedPromise = Promise.reject(errorMessage);
 
@@ -89,7 +89,7 @@ describe('getTodos', () => {
 });
 
 describe('createTodo', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
         req.body = newTodo;
     });
 
@@ -103,18 +103,18 @@ describe('createTodo', () => {
         expect(TodoModel.create).toBeCalledWith(newTodo);
     });
 
-    test('if the server returns status code 200 and the JSON body in the response', async () => {
+    test('if the server responds with status 200 and the created Todo when the request succeeded', async () => {
         TodoModel.create.mockReturnValue(newTodo);
 
         await todoController.createTodo(req, res);
 
-        expect(res.statusCode).toBe(201);
+        expect(res.statusCode).toBe(200);
         expect(res._isEndCalled()).toBeTruthy();
         expect(res._getJSONData()).toStrictEqual(newTodo);
     });
 
-    test('if the server returns an error when an invalid request is being made', async () => {
-        const errorMessage = { message: 'Done property is missing' };
+    test('if the server returns an error when the request failed', async () => {
+        const errorMessage = { message: 'Could not create todo' };
         const rejectedPromise = Promise.reject(errorMessage);
 
         TodoModel.create.mockReturnValue(rejectedPromise);
@@ -125,7 +125,7 @@ describe('createTodo', () => {
 });
 
 describe('updateTodo', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
         req.body = newTodo;
     });
 
@@ -142,18 +142,18 @@ describe('updateTodo', () => {
         expect(TodoModel.findByIdAndUpdate).toBeCalledWith(todoId, newTodo, { new: true });
     });
 
-    test('if the server returns status code 200 and the JSON body in the response', async () => {
+    test('if the server responds with status 200 and the updated Todo when the request succeeded', async () => {
         TodoModel.findByIdAndUpdate.mockReturnValue(newTodo);
 
         await todoController.updateTodo(req, res);
 
-        expect(res.statusCode).toBe(201);
+        expect(res.statusCode).toBe(200);
         expect(res._isEndCalled()).toBeTruthy();
         expect(res._getJSONData()).toStrictEqual(newTodo);
     });
 
-    test('if the server returns an error when an invalid request is being made', async () => {
-        const errorMessage = { message: 'Could not find a todo with that ID.' };
+    test('if the server returns an error when the request failed', async () => {
+        const errorMessage = { message: 'Could not update todo' };
         const rejectedPromise = Promise.reject(errorMessage);
 
         TodoModel.findByIdAndUpdate.mockReturnValue(rejectedPromise);
@@ -164,7 +164,7 @@ describe('updateTodo', () => {
 });
 
 describe('deleteTodo', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
         req.params.todoId = todoId;
     });
 
@@ -178,18 +178,18 @@ describe('deleteTodo', () => {
         expect(TodoModel.findByIdAndDelete).toBeCalledWith(todoId);
     });
 
-    test('if the server returns status code 200 and the JSON body in the response', async () => {
+    test('if the server responds with status 200 and the deleted Todo when the request succeeded', async () => {
         TodoModel.findByIdAndDelete.mockReturnValue(newTodo);
 
         await todoController.deleteTodo(req, res, next);
 
-        expect(res.statusCode).toBe(201);
+        expect(res.statusCode).toBe(200);
         expect(res._isEndCalled()).toBeTruthy();
         expect(res._getJSONData()).toStrictEqual(newTodo);
     });
 
-    test('if the server returns an error when an invalid request is being made', async () => {
-        const errorMessage = { message: 'Could not find a todo with that ID' };
+    test('if the server returns an error when the request failed', async () => {
+        const errorMessage = { message: 'Could not delete todo' };
         const rejectedPromise = Promise.reject(errorMessage);
 
         TodoModel.findByIdAndDelete.mockReturnValue(rejectedPromise);
